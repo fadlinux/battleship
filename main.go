@@ -111,6 +111,47 @@ func parseInput(lines []string) (int, int, [][]int, [][]int, int, [][]int, [][]i
 	return matrixM, matrixN, shipsP1, shipsP2, T, p1Targets, p2Targets
 }
 
+type GamePlay struct {
+	positionX CoordinatPosition
+	positionY CoordinatPosition
+	p1Hits    int
+	p2Hits    int
+	result    string
+}
+
+func NewGame(positionX, positionY CoordinatPosition) *GamePlay {
+	return &GamePlay{
+		positionX: positionX,
+		positionY: positionY,
+	}
+}
+
+func (g *GamePlay) Run(p1Targets, p2Targets [][]int) {
+	g.p1Hits = g.positionX.HitTarget(p2Targets)
+	g.p2Hits = g.positionY.HitTarget(p1Targets)
+
+	if g.p1Hits > g.p2Hits {
+		g.result = "Player 1 wins"
+	} else if g.p2Hits > g.p1Hits {
+		g.result = "Player 2 wins"
+	} else {
+		g.result = "It is a draw"
+	}
+}
+
+func (g *GamePlay) PrintResults() {
+	fmt.Println("Player 1 : ")
+	g.positionX.Result()
+
+	fmt.Println("Player 2")
+	g.positionY.Result()
+
+	fmt.Printf("P1:%d\n", g.p1Hits)
+	fmt.Printf("P2:%d\n", g.p2Hits)
+
+	fmt.Println(g.result)
+}
+
 func main() {
 	lines, err := openReadFile("sample.txt")
 	if err != nil {
@@ -122,5 +163,9 @@ func main() {
 
 	positionX := NewBattleShipPlayer(shipsP1, matrixM)
 	positionY := NewBattleShipPlayer(shipsP2, matrixM)
+
+	game := NewGame(positionX, positionY)
+	game.Run(p1Targets, p2Targets)
+	game.PrintResults()
 
 }
