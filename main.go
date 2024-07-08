@@ -30,7 +30,7 @@ func (bg *BattleShipPlayer) HitTarget(targets [][]int) int {
 			bg.position[x][y] = 'O'
 		}
 	}
-	ß
+
 	return hits
 }
 
